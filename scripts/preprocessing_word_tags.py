@@ -1,11 +1,14 @@
 import csv
+import getopt
+import os
+import pathlib
 import re
 import string
-import nltk
-import pathlib
-import os
-import getopt, sys
+import sys
 
+import nltk
+
+from sklearn import preprocessing
 import numpy as np
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -71,6 +74,15 @@ def preprocess(input_file, output_file):
         headers.append('num_comments')
         headers.append('label')
 
+        scores = np.array(score_input)
+        comments = np.array(comments_input)
+
+        std_scalar = preprocessing.StandardScaler().fit(scores.reshape(len(scores), 1))
+        norm_score_val = std_scalar.transform(scores.reshape(len(scores), 1))
+
+        std_scalar2 = preprocessing.StandardScaler().fit(comments.reshape(len(comments), 1))
+        norm_comm_val = std_scalar2.transform(comments.reshape(len(comments), 1))
+
         combinedTB_Writer = csv.DictWriter(output_file, headers)
         combinedTB_Writer.writeheader()
 
@@ -90,8 +102,10 @@ def preprocess(input_file, output_file):
                 elif header == 'subreddit':
                     preprocessed[header] = sub_redd_input[id]
                 elif header == 'score':
+                    #preprocessed[header] = norm_score_val[id][0]
                     preprocessed[header] = score_input[id]
                 elif header == 'num_comments':
+                    #preprocessed[header] = norm_comm_val[id][0]
                     preprocessed[header] = comments_input[id]
             combinedTB_Writer.writerow(preprocessed)
 
