@@ -288,12 +288,12 @@ def run_classifier(num_layers, nodes_hidn, file_name = 'tokenized_features.csv')
     for cls in prediction_accuracy.keys():
         if cls == 0:
             acc_liberal = round((100 * (prediction_accuracy[cls]['correct'] / prediction_accuracy[cls]['total'])), 2)
-            cm[0][cls] = int(prediction_accuracy[cls]['correct'])
-            cm[1][cls] = int(prediction_accuracy[cls]['incorrect'])
+            cm[cls][0] = int(prediction_accuracy[cls]['correct'])
+            cm[cls][1] = int(prediction_accuracy[cls]['incorrect'])
         else:
             acc_cons = round((100 * (prediction_accuracy[cls]['correct'] / prediction_accuracy[cls]['total'])), 2)
-            cm[0][cls] = int(prediction_accuracy[cls]['incorrect'])
-            cm[1][cls] = int(prediction_accuracy[cls]['correct'])
+            cm[cls][0] = int(prediction_accuracy[cls]['incorrect'])
+            cm[cls][1] = int(prediction_accuracy[cls]['correct'])
 
     end = time.time()
     print("\nTime taken: " + str(end - start))
