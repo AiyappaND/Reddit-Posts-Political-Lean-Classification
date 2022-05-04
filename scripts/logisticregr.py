@@ -17,9 +17,9 @@ def desc_data(y):
             print("Number of instances in class Conservative: " + str(count[cl]))
     return count
 
-def run_classifier():
+def run_classifier(file_name = 'tokenized_features.csv'):
     project_root = pathlib.Path().resolve().parent
-    inputF = open(os.path.join(project_root, 'data', 'generated', 'tokenized_features.csv'), "r")
+    inputF = open(os.path.join(project_root, 'data', 'generated', file_name), "r")
 
     df = read_csv(inputF)
     X = df.values[:, :-1]
@@ -56,7 +56,7 @@ def run_classifier():
 
     print("\nTime taken: " + str(end-start))
 
-    return (acc, acc_score_liberal, acc_score_cons, end-start)
+    return (acc, acc_score_liberal, acc_score_cons, end-start, cm)
 
 
 if __name__ == "__main__":

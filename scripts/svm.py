@@ -49,14 +49,14 @@ def run_svm(kernel, X_trn, Y_trn, X_tst, Y_tst):
     acc_score_cons = round(((cm[1][1] / data_count_test[1]) * 100), 2)
     print("Accuracy for class Conservative: " + str(acc_score_cons) + " %")
 
-    return (acc_score, acc_score_liberal, acc_score_cons)
+    return (acc_score, acc_score_liberal, acc_score_cons, cm)
 
 
-def run_classifier(kernel):
+def run_classifier(kernel, file_name = 'tokenized_features.csv'):
     if kernel not in ('linear', 'rbf', 'poly'):
         raise Exception('not a valid kernel.\nshould be one of (linear, rbf, poly)')
     project_root = pathlib.Path().resolve().parent
-    inputF = open(os.path.join(project_root, 'data', 'generated', 'tokenized_features.csv'), "r")
+    inputF = open(os.path.join(project_root, 'data', 'generated', file_name), "r")
 
     df = read_csv(inputF)
     X = df.values[:, :-1]
@@ -64,11 +64,11 @@ def run_classifier(kernel):
 
     x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.25, random_state=0)
     start = time.time()
-    (acc_score, acc_score_liberal, acc_score_cons) = run_svm(kernel, x_train, y_train, x_test, y_test)
+    (acc_score, acc_score_liberal, acc_score_cons, cm) = run_svm(kernel, x_train, y_train, x_test, y_test)
     end = time.time()
     print("\nTime taken: " + str(end - start))
 
-    return (acc_score, acc_score_liberal, acc_score_cons, end-start)
+    return (acc_score, acc_score_liberal, acc_score_cons, end-start, cm)
 
 
 if __name__ == "__main__":

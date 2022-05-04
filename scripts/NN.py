@@ -1,5 +1,7 @@
 import time
 
+import numpy
+from sklearn import metrics
 from torch.utils.data import Dataset
 from pandas import read_csv
 from collections import OrderedDict
@@ -133,10 +135,12 @@ def evaluate_model(dataset, model):
     for i in range(no_classes):
         prediction_accuracy[i] = {'correct': 0, 'total': 0, 'incorrect': 0}
 
+
     with torch.no_grad():
         for X, y in dl:
             pred = model(X)
             out = y.numpy()
+
             test_loss += loss_fn(pred, y.unsqueeze(1)).item()
             predicted_class = np.round(pred.detach())
 
@@ -166,11 +170,11 @@ def print_eval_results(result):
                 f"accuracy for class Conservative: {(100 * (prediction_accuracy[cls]['correct'] / prediction_accuracy[cls]['total'])):>0.2f}%")
 
 
-def run_classifier(num_layers, nodes_hidn):
+def run_classifier(num_layers, nodes_hidn, file_name = 'tokenized_features.csv'):
     project_root = pathlib.Path().resolve().parent
     dataDir = 'data'
     dataSubDir = 'generated'
-    file = 'tokenized_features.csv'
+    file = file_name
 
     df = read_csv(os.path.join(project_root, dataDir, dataSubDir, file))
     X = df.values[:, :-1]
@@ -281,15 +285,21 @@ def run_classifier(num_layers, nodes_hidn):
 
     acc = round(results['accuracy'], 2)
     prediction_accuracy = results['perclass']
+    cm = numpy.empty((2, 2))
     for cls in prediction_accuracy.keys():
         if cls == 0:
             acc_liberal = round((100 * (prediction_accuracy[cls]['correct'] / prediction_accuracy[cls]['total'])), 2)
+            cm[0][cls] = int(prediction_accuracy[cls]['correct'])
+            cm[1][cls] = int(prediction_accuracy[cls]['incorrect'])
         else:
             acc_cons = round((100 * (prediction_accuracy[cls]['correct'] / prediction_accuracy[cls]['total'])), 2)
+            cm[0][cls] = int(prediction_accuracy[cls]['correct'])
+            cm[1][cls] = int(prediction_accuracy[cls]['incorrect'])
+
     end = time.time()
     print("\nTime taken: " + str(end - start))
     print("Done!")
-    return (acc, acc_liberal, acc_cons, end-start)
+    return (acc, acc_liberal, acc_cons, end-start, cm)
 
 
 if __name__ == "__main__":
