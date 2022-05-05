@@ -11,9 +11,29 @@ test_overall_accuracy = []
 liberal_accuracy = []
 conservative_accuracy = []
 time_taken = []
-recall = []
-precision = []
-f1_score = []
+recall_lib = []
+precision_lib = []
+f1_score_lib = []
+recall_cons = []
+precision_cons = []
+f1_score_cons = []
+
+def record_results(accuracy, a_lib, a_cons, time, conf_m):
+    test_overall_accuracy.append(accuracy)
+    liberal_accuracy.append(a_lib)
+    conservative_accuracy.append(a_cons)
+    time_taken.append(time)
+    rec_lib = conf_m[0][0] / (conf_m[0][0] + conf_m[1][0])
+    prec_lib = conf_m[0][0] / (conf_m[0][0] + conf_m[0][1])
+    rec_cons = conf_m[1][1] / (conf_m[0][1] + conf_m[1][1])
+    prec_cons = conf_m[1][1] / (conf_m[1][1] + conf_m[1][0])
+    recall_lib.append(rec_lib)
+    precision_lib.append(prec_lib)
+    f1_score_lib.append(2 * ((rec_lib * prec_lib) / (rec_lib + prec_lib)))
+    recall_cons.append(rec_cons)
+    precision_cons.append(prec_cons)
+    f1_score_cons.append(2 * ((rec_cons * prec_cons) / (rec_cons + prec_cons)))
+
 
 #test_overall_accuracy = [67.42, 66.37, 65.18, 64.62, 78.06]
 #liberal_accuracy = [96.14, 99.04, 99.9, 99.95, 83.80]
@@ -30,67 +50,24 @@ if len(sys.argv) == 2:
 
     print("\nRunning logistic regression...")
     (acc, acc_lib, acc_cons, time, cm) = logreg.run_classifier(file_name)
-    test_overall_accuracy.append(acc)
-    liberal_accuracy.append(acc_lib)
-    conservative_accuracy.append(acc_cons)
-    time_taken.append(time)
-    rec = cm[0][0] / (cm[0][0] + cm[1][0])
-    prec = cm[0][0] / (cm[0][0] + cm[0][1])
-    recall.append(rec)
-    precision.append(prec)
-    f1_score.append(2 * ((rec * prec) / (rec + prec)))
+    record_results(acc, acc_lib, acc_cons, time, cm)
 
     print("\nRunning svm - linear kernel...")
     (acc, acc_lib, acc_cons, time, cm) = svm.run_classifier('linear', file_name)
-    test_overall_accuracy.append(acc)
-    liberal_accuracy.append(acc_lib)
-    conservative_accuracy.append(acc_cons)
-    time_taken.append(time)
-    rec = cm[0][0] / (cm[0][0] + cm[1][0])
-    prec = cm[0][0] / (cm[0][0] + cm[0][1])
-    recall.append(rec)
-    precision.append(prec)
-    f1_score.append(2 * ((rec * prec) / (rec + prec)))
+    record_results(acc, acc_lib, acc_cons, time, cm)
 
     print("\nRunning svm - rbf kernel...")
     (acc, acc_lib, acc_cons, time, cm) = svm.run_classifier('rbf', file_name)
-    test_overall_accuracy.append(acc)
-    liberal_accuracy.append(acc_lib)
-    conservative_accuracy.append(acc_cons)
-    time_taken.append(time)
-    rec = cm[0][0] / (cm[0][0] + cm[1][0])
-    prec = cm[0][0] / (cm[0][0] + cm[0][1])
-    recall.append(rec)
-    precision.append(prec)
-    f1_score.append(2 * ((rec * prec) / (rec + prec)))
+    record_results(acc, acc_lib, acc_cons, time, cm)
 
     print("\nRunning svm - poly kernel...")
     (acc, acc_lib, acc_cons, time, cm) = svm.run_classifier('poly', file_name)
-    test_overall_accuracy.append(acc)
-    liberal_accuracy.append(acc_lib)
-    conservative_accuracy.append(acc_cons)
-    time_taken.append(time)
-    rec = cm[0][0] / (cm[0][0] + cm[1][0])
-    prec = cm[0][0] / (cm[0][0] + cm[0][1])
-    recall.append(rec)
-    precision.append(prec)
-    f1_score.append(2 * ((rec * prec) / (rec + prec)))
+    record_results(acc, acc_lib, acc_cons, time, cm)
+
 
     print("\nRunning NN...")
     (acc, acc_lib, acc_cons, time, cm) = NN.run_classifier(2, [64, 32], file_name)
-    test_overall_accuracy.append(acc)
-    liberal_accuracy.append(acc_lib)
-    conservative_accuracy.append(acc_cons)
-    time_taken.append(time)
-    rec = cm[0][0] / (cm[0][0] + cm[1][0])
-    prec = cm[0][0] / (cm[0][0] + cm[0][1])
-    recall.append(rec)
-    precision.append(prec)
-    f1_score.append(2 * ((rec * prec) / (rec + prec)))
-
-    print(recall)
-    print(precision)
-    print(f1_score)
+    record_results(acc, acc_lib, acc_cons, time, cm)
 
     fig, (ax) = plt.subplots(2, 2)
 
@@ -108,6 +85,48 @@ if len(sys.argv) == 2:
         ax[0][1].annotate(txt, (X[i]+0.05, liberal_accuracy[i]+0.05))
         ax[1][0].annotate(txt, (X[i]+0.05, conservative_accuracy[i]+0.05))
         ax[1][1].annotate(txt, (X[i]+0.05, time_taken[i]+0.05))
+
+    plt.show()
+
+    fig, (ax) = plt.subplots(1, 2, sharey=True)
+
+    ax[0].title.set_text("Precision - Liberal")
+    ax[0].scatter(X, precision_lib, color=['red', 'green', 'blue', 'orange', 'black'])
+
+    ax[1].title.set_text("Precision - Conservative")
+    ax[1].scatter(X, precision_cons, color=['red', 'green', 'blue', 'orange', 'black'])
+
+    for i, txt in enumerate(labels):
+        ax[0].annotate(txt, (X[i]+0.05, precision_lib[i]+0.01))
+        ax[1].annotate(txt, (X[i]+0.05, precision_cons[i]+0.01))
+
+    plt.show()
+
+    fig, (ax) = plt.subplots(1, 2, sharey=True)
+
+    ax[0].title.set_text("Recall - Liberal")
+    ax[0].scatter(X, recall_lib, color=['red', 'green', 'blue', 'orange', 'black'])
+
+    ax[1].title.set_text("Recall - Conservative")
+    ax[1].scatter(X, recall_cons, color=['red', 'green', 'blue', 'orange', 'black'])
+
+    for i, txt in enumerate(labels):
+        ax[0].annotate(txt, (X[i]+0.05, recall_lib[i]+0.01))
+        ax[1].annotate(txt, (X[i]+0.05, recall_cons[i]+0.01))
+
+    plt.show()
+
+    fig, (ax) = plt.subplots(1, 2, sharey=True)
+
+    ax[0].title.set_text("F1 score - Liberal")
+    ax[0].scatter(X, f1_score_lib, color=['red', 'green', 'blue', 'orange', 'black'])
+
+    ax[1].title.set_text("F1 score - Conservative")
+    ax[1].scatter(X, f1_score_cons, color=['red', 'green', 'blue', 'orange', 'black'])
+
+    for i, txt in enumerate(labels):
+        ax[0].annotate(txt, (X[i]+0.05, f1_score_lib[i]+0.01))
+        ax[1].annotate(txt, (X[i]+0.05, f1_score_cons[i]+0.01))
 
     plt.show()
 else:

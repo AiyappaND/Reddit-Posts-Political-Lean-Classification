@@ -56,6 +56,7 @@ def run_classifier(file_name = 'tokenized_features.csv'):
 
     print("\nTime taken: " + str(end-start))
 
+    #print(cm)
     return (acc, acc_score_liberal, acc_score_cons, end-start, cm)
 
 

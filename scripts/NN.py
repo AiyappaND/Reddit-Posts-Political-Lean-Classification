@@ -124,7 +124,7 @@ def train_model(train_dataset, batch_size, lrn_rt, model):
 
 
 def evaluate_model(dataset, model):
-    dl = DataLoader(dataset, batch_size=100, shuffle=True)
+    dl = DataLoader(dataset, batch_size=100, shuffle=False)
     size = len(dl.dataset)
     num_batches = len(dl)
     test_loss, correct = 0, 0
@@ -231,9 +231,8 @@ def run_classifier(num_layers, nodes_hidn, file_name = 'tokenized_features.csv')
             # pred_acc = (prediction_accuracy[0]['correct'] + prediction_accuracy[1]['correct']) /\
             # (prediction_accuracy[0]['total'] + prediction_accuracy[1]['total'])
             # selecting best model based on conservative accuracy
-            pred_acc = 0.45 * (
-                    prediction_accuracy[0]['correct'] / prediction_accuracy[0]['total']) + \
-                       0.55 * (prediction_accuracy[1]['correct'] / prediction_accuracy[1]['total'])
+            pred_acc = 0.5 * (prediction_accuracy[0]['correct'] / prediction_accuracy[0]['total']) + \
+                       0.5 * (prediction_accuracy[1]['correct'] / prediction_accuracy[1]['total'])
             print(
                 f"Accuracy: {val_accuracy['accuracy']:>0.2f}%, Avg loss: {val_accuracy['loss']:>8f} \n")
             if pred_acc > max_accuracy:
@@ -289,16 +288,17 @@ def run_classifier(num_layers, nodes_hidn, file_name = 'tokenized_features.csv')
     for cls in prediction_accuracy.keys():
         if cls == 0:
             acc_liberal = round((100 * (prediction_accuracy[cls]['correct'] / prediction_accuracy[cls]['total'])), 2)
-            cm[0][cls] = int(prediction_accuracy[cls]['correct'])
-            cm[1][cls] = int(prediction_accuracy[cls]['incorrect'])
+            cm[cls][0] = int(prediction_accuracy[cls]['correct'])
+            cm[cls][1] = int(prediction_accuracy[cls]['incorrect'])
         else:
             acc_cons = round((100 * (prediction_accuracy[cls]['correct'] / prediction_accuracy[cls]['total'])), 2)
-            cm[0][cls] = int(prediction_accuracy[cls]['correct'])
-            cm[1][cls] = int(prediction_accuracy[cls]['incorrect'])
+            cm[cls][0] = int(prediction_accuracy[cls]['incorrect'])
+            cm[cls][1] = int(prediction_accuracy[cls]['correct'])
 
     end = time.time()
     print("\nTime taken: " + str(end - start))
     print("Done!")
+    #print(cm)
     return (acc, acc_liberal, acc_cons, end-start, cm)
 
 
