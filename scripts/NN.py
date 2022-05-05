@@ -184,11 +184,11 @@ def run_classifier(num_layers, nodes_hidn, file_name = 'tokenized_features.csv')
     x_test, val_train, y_test, val_test = train_test_split(x_test, y_test, test_size=0.50,
                                                            random_state=0)
 
-    print("Describing train data...")
+    print("\nDescribing train data...")
     train_dataset = CustomTorchDataset(x_train, y_train)
-    print("Describing test data...")
+    print("\nDescribing test data...")
     test_dataset = CustomTorchDataset(x_test, y_test)
-    print("Describing validation data...")
+    print("\nDescribing validation data...")
     val_dataset = CustomTorchDataset(val_train, val_test)
 
     hyper_parameters = {"epoch": [40, 25, 25], "batch_size": [5, 10, 5],
@@ -298,7 +298,7 @@ def run_classifier(num_layers, nodes_hidn, file_name = 'tokenized_features.csv')
     end = time.time()
     print("\nTime taken: " + str(end - start))
     print("Done!")
-    #print(cm)
+
     return (acc, acc_liberal, acc_cons, end-start, cm)
 
 

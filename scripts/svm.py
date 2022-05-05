@@ -23,8 +23,15 @@ def desc_data(y):
     return count
 
 
-def run_svm(kernel, X_trn, Y_trn, X_tst, Y_tst):
-    model = svm.SVC(kernel=kernel, C=0.05)
+def run_svm(kernel, X_trn, Y_trn, X_tst, Y_tst, f_name):
+    if f_name == 'tokenized_features.csv':
+        if kernel in ('rbf', 'poly'):
+            model = svm.SVC(kernel=kernel, C=500)
+        else:
+            model = svm.SVC(kernel=kernel, C=0.05)
+    else:
+        model = svm.SVC(kernel=kernel)
+
     model.fit(X_trn, np.ravel(Y_trn))
 
     Y_prd = model.predict(X_tst)
@@ -64,7 +71,7 @@ def run_classifier(kernel, file_name = 'tokenized_features.csv'):
 
     x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.25, random_state=0)
     start = time.time()
-    (acc_score, acc_score_liberal, acc_score_cons, cm) = run_svm(kernel, x_train, y_train, x_test, y_test)
+    (acc_score, acc_score_liberal, acc_score_cons, cm) = run_svm(kernel, x_train, y_train, x_test, y_test, file_name)
     end = time.time()
     print("\nTime taken: " + str(end - start))
 
