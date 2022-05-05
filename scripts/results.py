@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 import logisticregr as logreg
 import svm
 import NN
+import seaborn as sns
 
 X = np.arange(5)
 
@@ -33,6 +34,21 @@ def record_results(accuracy, a_lib, a_cons, time, conf_m):
     recall_cons.append(rec_cons)
     precision_cons.append(prec_cons)
     f1_score_cons.append(2 * ((rec_cons * prec_cons) / (rec_cons + prec_cons)))
+
+
+    ax = sns.heatmap(conf_m/np.sum(conf_m), annot=True,
+                     fmt='.2%', cmap='Blues')
+
+    ax.set_title('Confusion Matrix\n\n');
+    ax.set_xlabel('\nPredicted Values')
+    ax.set_ylabel('Actual Values ');
+
+    ## Ticket labels - List must be in alphabetical order
+    ax.xaxis.set_ticklabels(['Liberal','Conservative'])
+    ax.yaxis.set_ticklabels(['Liberal','Conservative'])
+
+    ## Display the visualization of the Confusion Matrix.
+    plt.show()
 
 
 #test_overall_accuracy = [67.42, 66.37, 65.18, 64.62, 78.06]
