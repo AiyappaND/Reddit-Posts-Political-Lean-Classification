@@ -45,7 +45,8 @@ Looks for the file in data/generated/
 Requires feature file name after preprocessing and kernel function. 
 Looks for the file in data/generated/
 
-### Results consolidation
+Results consolidation
+-----------
 
 To run all models for a features file:
 ```python scripts\results.py [tokenized_features.csv/w2vecscale.csv]```
