@@ -33,8 +33,8 @@ Models
 Requires feature file name after preprocessing. 
 Looks for the file in data/generated/
 
-Logistic regression:
-python scripts\logisticregr.py [tokenized_features.csv/w2vecscale.csv]
+### Logistic regression:
+```python scripts\logisticregr.py [tokenized_features.csv/w2vecscale.csv]```
 
 Requires feature file name after preprocessing. 
 Looks for the file in data/generated/
