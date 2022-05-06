@@ -1,3 +1,4 @@
+import sys
 import time
 
 import numpy
@@ -124,7 +125,7 @@ def train_model(train_dataset, batch_size, lrn_rt, model):
 
 
 def evaluate_model(dataset, model):
-    dl = DataLoader(dataset, batch_size=100, shuffle=False)
+    dl = DataLoader(dataset, batch_size=100, shuffle=True)
     size = len(dl.dataset)
     num_batches = len(dl)
     test_loss, correct = 0, 0
@@ -193,6 +194,8 @@ def run_classifier(num_layers, nodes_hidn, file_name = 'tokenized_features.csv')
 
     hyper_parameters = {"epoch": [40, 25, 25], "batch_size": [5, 10, 5],
                         "learning_rate": [0.05, 0.01, 0.05]}
+    #hyper_parameters = {"epoch": [40, 25, 25], "batch_size": [15, 10, 5],
+    #                    "learning_rate": [0.05, 0.01, 0.05]}
 
     min_loss = 99999999
     max_accuracy = -1
@@ -208,7 +211,10 @@ def run_classifier(num_layers, nodes_hidn, file_name = 'tokenized_features.csv')
         epochs = hyper_parameters["epoch"][it]
         batch_size = hyper_parameters["batch_size"][it]
         lrn_rt = hyper_parameters["learning_rate"][it]
-        model = ClassificationModel(num_layers, nodes_hidn)
+        if file_name == 'tokenized_features.csv':
+            model = ClassificationModel(num_layers, nodes_hidn)
+        else:
+            model = ClassificationModel(num_layers, nodes_hidn, n_inputs=303)
 
         print("\nRunning training with following hyper parameters:")
         print("Number of epochs: " + str(epochs))
@@ -266,7 +272,10 @@ def run_classifier(num_layers, nodes_hidn, file_name = 'tokenized_features.csv')
     print("Batch size:" + str(best_batch_size))
 
     # loading the state_dict
-    model_new = ClassificationModel(num_layers, nodes_hidn)
+    if file_name == 'tokenized_features.csv':
+        model_new = ClassificationModel(num_layers, nodes_hidn)
+    else:
+        model_new = ClassificationModel(num_layers, nodes_hidn, n_inputs=303)
     model_new.load_state_dict(torch.load('weights_only.pth'))
 
     print("\nTesting on the best model...")
@@ -314,4 +323,4 @@ if __name__ == "__main__":
         if nodes < 1:
             raise Exception("number of nodes at a layer cannot be less than 1, exiting...")
         nodes_hidden.append(nodes)
-    run_classifier(number_layers, nodes_hidden)
+    run_classifier(number_layers, nodes_hidden, sys.argv[1])
