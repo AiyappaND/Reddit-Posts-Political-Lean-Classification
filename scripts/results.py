@@ -59,7 +59,7 @@ def record_results(accuracy, a_lib, a_cons, time, conf_m):
 labels = ["logistic", "svm - linear", "svm - rbf", "svm - poly", "NN"]
 
 if len(sys.argv) == 2:
-    if sys.argv[1] in ('tokenized_features.csv'):
+    if sys.argv[1] in ('tokenized_features.csv', 'w2vecscale.csv'):
         file_name = sys.argv[1]
     else:
         raise Exception('Unsupported preprocessing file: ' + sys.argv[1])
@@ -80,9 +80,16 @@ if len(sys.argv) == 2:
     (acc, acc_lib, acc_cons, time, cm) = svm.run_classifier('poly', file_name)
     record_results(acc, acc_lib, acc_cons, time, cm)
 
-
     print("\nRunning NN...")
-    (acc, acc_lib, acc_cons, time, cm) = NN.run_classifier(4, [64, 32], file_name)
+    if file_name == 'w2vecscale.csv':
+        hidden_l = 4
+        nodes_hidden = [128, 128]
+    elif file_name == 'tokenized_features.csv':
+        hidden_l = 4
+        nodes_hidden = [64, 32]
+    else:
+        raise Exception('configure NN for the feature file.')
+    (acc, acc_lib, acc_cons, time, cm) = NN.run_classifier(hidden_l, nodes_hidden, file_name)
     record_results(acc, acc_lib, acc_cons, time, cm)
 
     fig, (ax) = plt.subplots(2, 2)
@@ -157,4 +164,4 @@ if len(sys.argv) == 2:
 else:
     raise Exception('not enough arguments to run the script.\n'
                     'the script should be provided with the preprocessed csv file with featured.'
-                    '\nrun info: python results.py [prepocessed_file]')
+                    '\nrun info: python results.py [tokenized_features.csv/w2vecscale.csv]')

@@ -328,15 +328,20 @@ def run_classifier(num_layers, nodes_hidn, file_name = 'tokenized_features.csv')
 
 
 if __name__ == "__main__":
-    number_layers = int(input("\nEnter the number of layers for the neural network including the input and output layer (i.e, value > 2): "))
-    if number_layers < 2:
-        raise Exception("number of layers cannot be less than 2, exiting...")
-    nodes_hidden = []
-    for i in range(number_layers - 2):
-        nodes = int(input(
-            "Enter the number of nodes at " + str(i + 1) + " hidden layer (layer " + str(
-                i + 2) + "): "))
-        if nodes < 1:
-            raise Exception("number of nodes at a layer cannot be less than 1, exiting...")
-        nodes_hidden.append(nodes)
-    run_classifier(number_layers, nodes_hidden)
+    if len(sys.argv) == 2:
+        number_layers = int(input("\nEnter the number of layers for the neural network including the input and output layer (i.e, value > 2): "))
+        if number_layers < 2:
+            raise Exception("number of layers cannot be less than 2, exiting...")
+        nodes_hidden = []
+        for i in range(number_layers - 2):
+            nodes = int(input(
+                "Enter the number of nodes at " + str(i + 1) + " hidden layer (layer " + str(
+                    i + 2) + "): "))
+            if nodes < 1:
+                raise Exception("number of nodes at a layer cannot be less than 1, exiting...")
+            nodes_hidden.append(nodes)
+        run_classifier(number_layers, nodes_hidden, file_name=sys.argv[1])
+    else:
+        raise Exception('not enough arguments to run the script.\n'
+                        'the script should be provided with features file.'
+                        '\nrun info: python NN.py [tokenized_features.csv/w2vecscale.csv]')

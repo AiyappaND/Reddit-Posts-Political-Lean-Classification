@@ -79,9 +79,9 @@ def run_classifier(kernel, file_name = 'tokenized_features.csv'):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 2:
-        run_classifier(sys.argv[1])
+    if len(sys.argv) == 3:
+        run_classifier(sys.argv[2], file_name=sys.argv[1])
     else:
         raise Exception('not enough arguments to run the script.\n'
-                        'the script should be provided kernel function to run.'
-                        '\nrun info: python svm.py [linear/rbf/poly]')
+                        'the script should be provided with features file and kernel function to run.'
+                        '\nrun info: python svm.py [tokenized_features.csv/w2vecscale.csv] [linear/rbf/poly]')
