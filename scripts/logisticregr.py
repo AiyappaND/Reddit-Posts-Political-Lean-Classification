@@ -1,3 +1,5 @@
+import sys
+
 from pandas import read_csv
 import pathlib
 import os
@@ -60,4 +62,9 @@ def run_classifier(file_name = 'tokenized_features.csv'):
 
 
 if __name__ == "__main__":
-    run_classifier()
+    if len(sys.argv == 2):
+        run_classifier(sys.argv[1])
+    else:
+        raise Exception('not enough arguments to run the script.\n'
+                    'the script should be provided with features file.'
+                    '\nrun info: python logisticregr.py [tokenized_features.csv/w2vecscale.csv]')
