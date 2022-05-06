@@ -82,7 +82,7 @@ if len(sys.argv) == 2:
 
 
     print("\nRunning NN...")
-    (acc, acc_lib, acc_cons, time, cm) = NN.run_classifier(2, [64, 32], file_name)
+    (acc, acc_lib, acc_cons, time, cm) = NN.run_classifier(4, [64, 32], file_name)
     record_results(acc, acc_lib, acc_cons, time, cm)
 
     fig, (ax) = plt.subplots(2, 2)
@@ -144,6 +144,15 @@ if len(sys.argv) == 2:
         ax[0].annotate(txt, (X[i]+0.05, f1_score_lib[i]+0.01))
         ax[1].annotate(txt, (X[i]+0.05, f1_score_cons[i]+0.01))
 
+    print(test_overall_accuracy)
+    print(liberal_accuracy)
+    print(conservative_accuracy)
+    print(recall_lib)
+    print(precision_lib)
+    print(f1_score_lib)
+    print(recall_cons)
+    print(precision_cons)
+    print(f1_score_cons)
     plt.show()
 else:
     raise Exception('not enough arguments to run the script.\n'

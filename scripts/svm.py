@@ -24,13 +24,13 @@ def desc_data(y):
 
 
 def run_svm(kernel, X_trn, Y_trn, X_tst, Y_tst, f_name):
-    if f_name == 'tokenized_features.csv':
-        if kernel in ('rbf', 'poly'):
-            model = svm.SVC(kernel=kernel, C=500)
-        else:
-            model = svm.SVC(kernel=kernel, C=0.05)
+    if kernel in ('rbf', 'poly'):
+        model = svm.SVC(kernel=kernel, C=500)
     else:
-        model = svm.SVC(kernel=kernel)
+        if f_name == 'tokenized_features.csv':
+            model = svm.SVC(kernel=kernel, C=0.05)
+        else:
+            model = svm.SVC(kernel=kernel)
 
     model.fit(X_trn, np.ravel(Y_trn))
 

@@ -1,5 +1,6 @@
 import sys
 import time
+import seaborn as sns
 
 import numpy
 from sklearn import metrics
@@ -236,9 +237,9 @@ def run_classifier(num_layers, nodes_hidn, file_name = 'tokenized_features.csv')
             prediction_accuracy = val_accuracy['perclass']
             # pred_acc = (prediction_accuracy[0]['correct'] + prediction_accuracy[1]['correct']) /\
             # (prediction_accuracy[0]['total'] + prediction_accuracy[1]['total'])
-            # selecting best model based on conservative accuracy
-            pred_acc = 0.5 * (prediction_accuracy[0]['correct'] / prediction_accuracy[0]['total']) + \
-                       0.5 * (prediction_accuracy[1]['correct'] / prediction_accuracy[1]['total'])
+            # selecting best model based on conservative accuracy a bit more
+            pred_acc = (0.43 * (prediction_accuracy[0]['correct'] / prediction_accuracy[0]['total'])) + \
+                       (0.57 * (prediction_accuracy[1]['correct'] / prediction_accuracy[1]['total']))
             print(
                 f"Accuracy: {val_accuracy['accuracy']:>0.2f}%, Avg loss: {val_accuracy['loss']:>8f} \n")
             if pred_acc > max_accuracy:
@@ -305,9 +306,24 @@ def run_classifier(num_layers, nodes_hidn, file_name = 'tokenized_features.csv')
             cm[cls][1] = int(prediction_accuracy[cls]['correct'])
 
     end = time.time()
+
     print("\nTime taken: " + str(end - start))
     print("Done!")
+    '''
+    ax = sns.heatmap(cm/np.sum(cm), annot=True,
+                     fmt='.2%', cmap='Blues')
 
+    ax.set_title('Confusion Matrix\n\n');
+    ax.set_xlabel('\nPredicted Values')
+    ax.set_ylabel('Actual Values ');
+
+    ## Ticket labels - List must be in alphabetical order
+    ax.xaxis.set_ticklabels(['Liberal','Conservative'])
+    ax.yaxis.set_ticklabels(['Liberal','Conservative'])
+
+    ## Display the visualization of the Confusion Matrix.
+    plt.show()
+    '''
     return (acc, acc_liberal, acc_cons, end-start, cm)
 
 
@@ -323,4 +339,4 @@ if __name__ == "__main__":
         if nodes < 1:
             raise Exception("number of nodes at a layer cannot be less than 1, exiting...")
         nodes_hidden.append(nodes)
-    run_classifier(number_layers, nodes_hidden, sys.argv[1])
+    run_classifier(number_layers, nodes_hidden)
